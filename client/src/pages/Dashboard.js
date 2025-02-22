@@ -1,5 +1,7 @@
+// client/src/pages/Dashboard.js
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import useAPI from "../hooks/useAPI"
 
 function Dashboard() {
     const [submissions, setSubmissions] = useState([])
@@ -9,43 +11,24 @@ function Dashboard() {
     const role = localStorage.getItem("role")
     const navigate = useNavigate()
 
+    // Destructure custom hook methods
+    const { getKycSubmissions, getKpi, updateKycStatus } = useAPI()
+
     useEffect(() => {
         if (!token || role !== "admin") {
             navigate("/")
             return
         }
-        fetchKycSubmissions()
-        fetchKpi()
+        fetchData()
         // eslint-disable-next-line
-    }, [token, role, navigate])
+    }, [token, role])
 
-    const fetchKycSubmissions = async () => {
+    const fetchData = async () => {
         try {
-            const res = await fetch("http://localhost:4000/api/kyc/all", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            const data = await res.json()
-            if (res.ok) {
-                setSubmissions(data.submissions)
-            }
-        } catch (err) {
-            console.error(err)
-        }
-    }
-
-    const fetchKpi = async () => {
-        try {
-            const res = await fetch("http://localhost:4000/api/kyc/kpi", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            const data = await res.json()
-            if (res.ok) {
-                setKpi(data)
-            }
+            const submissionsData = await getKycSubmissions(token)
+            const kpiData = await getKpi(token)
+            setSubmissions(submissionsData)
+            setKpi(kpiData)
         } catch (err) {
             console.error(err)
         }
@@ -53,24 +36,12 @@ function Dashboard() {
 
     const handleStatusChange = async (id, status) => {
         try {
-            const res = await fetch(`http://localhost:4000/api/kyc/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ status })
-            })
-            const data = await res.json()
-            if (res.ok) {
-                // Refresh the list and KPI
-                fetchKycSubmissions()
-                fetchKpi()
-            } else {
-                alert(data.message)
-            }
+            await updateKycStatus(token, id, status)
+            // Refresh the data
+            fetchData()
         } catch (err) {
             console.error(err)
+            alert(err.message)
         }
     }
 

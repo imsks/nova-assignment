@@ -1,6 +1,6 @@
 // client/src/pages/Register.js
-
 import React, { useState } from "react"
+import useAPI from "../hooks/useAPI"
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -9,7 +9,10 @@ function Register() {
         role: "user"
     })
     const [message, setMessage] = useState("")
-    const [isError, setIsError] = useState(false) // Track if message is an error
+    const [isError, setIsError] = useState(false)
+
+    // Import the API function
+    const { registerUser } = useAPI()
 
     const handleChange = (e) => {
         setFormData({
@@ -18,7 +21,6 @@ function Register() {
         })
     }
 
-    // Handle switching roles via button
     const handleRoleChange = (role) => {
         setFormData((prev) => ({ ...prev, role }))
     }
@@ -26,35 +28,24 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const res = await fetch("http://localhost:4000/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            })
-            const data = await res.json()
-            if (res.ok) {
-                setMessage("Registration successful! You can now login.")
-                setIsError(false)
-            } else {
-                setMessage(data.message || "Registration failed.")
-                setIsError(true)
-            }
+            await registerUser(formData)
+
+            setMessage("Registration successful! You can now login.")
+            setIsError(false)
         } catch (err) {
             console.error(err)
-            setMessage("Error occurred during registration.")
+            setMessage(err.message)
             setIsError(true)
         }
     }
 
     return (
         <div className='flex items-center justify-center min-h-screen bg-gray-100'>
-            {/* Container */}
             <div className='max-w-md w-full bg-white p-8 rounded-md shadow-md'>
                 <h2 className='text-2xl font-semibold text-center mb-6'>
                     Register
                 </h2>
 
-                {/* Success/Error message */}
                 {message && (
                     <div
                         className={`mb-4 p-3 rounded ${
@@ -81,7 +72,7 @@ function Register() {
                             placeholder='Email'
                             value={formData.email}
                             onChange={handleChange}
-                            className='w-full px-3 py-2 border border-gray-300 
+                            className='w-full px-3 py-2 border border-gray-300
                          rounded-md focus:outline-none focus:ring-1 
                          focus:ring-blue-500'
                             required
@@ -147,11 +138,6 @@ function Register() {
                         Register
                     </button>
                 </form>
-                <div className='mt-4 text-center'>
-                    <a href='/' className='text-blue-500'>
-                        Already have an account? Login
-                    </a>
-                </div>
             </div>
         </div>
     )

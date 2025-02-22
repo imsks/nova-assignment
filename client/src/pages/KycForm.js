@@ -1,20 +1,22 @@
 // client/src/pages/KycForm.js
-
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import useAPI from "../hooks/useAPI"
 
 function KycForm() {
     const [fullName, setFullName] = useState("")
     const [docUrl, setDocUrl] = useState("")
     const [kycStatus, setKycStatus] = useState(null)
-
-    const [message, setMessage] = useState("") // success or error message
-    const [isError, setIsError] = useState(false) // track whether message is error
+    const [message, setMessage] = useState("")
+    const [isError, setIsError] = useState(false)
 
     const navigate = useNavigate()
     const token = localStorage.getItem("token")
 
-    // Redirect if not authenticated
+    // Destructure custom hook methods
+    const { getKycStatus, submitKyc } = useAPI()
+
+    // Redirect if no token
     useEffect(() => {
         if (!token) {
             navigate("/")
@@ -23,50 +25,32 @@ function KycForm() {
 
     // Fetch existing KYC status
     useEffect(() => {
-        const fetchKycStatus = async () => {
+        const fetchStatus = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/kyc/user", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                const data = await res.json()
-
-                if (res.ok && data.kyc) {
-                    setKycStatus(data.kyc.status)
+                const data = await getKycStatus(token)
+                if (data) {
+                    setKycStatus(data.status)
                 }
             } catch (err) {
                 console.error(err)
             }
         }
-
-        fetchKycStatus()
-    }, [token])
+        fetchStatus()
+    }, [token, getKycStatus])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const res = await fetch("http://localhost:4000/api/kyc/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ full_name: fullName, doc_url: docUrl })
+            const result = await submitKyc(token, {
+                fullName,
+                docUrl
             })
-            const data = await res.json()
-
-            if (res.ok) {
-                setMessage("KYC submitted successfully!")
-                setIsError(false)
-                setKycStatus(data.kyc.status)
-            } else {
-                setMessage(data.message || "Error submitting KYC.")
-                setIsError(true)
-            }
+            setKycStatus(result.kyc.status)
+            setMessage("KYC submitted successfully!")
+            setIsError(false)
         } catch (err) {
             console.error(err)
-            setMessage("An error occurred while submitting KYC.")
+            setMessage(err.message)
             setIsError(true)
         }
     }
@@ -78,14 +62,14 @@ function KycForm() {
                     KYC Form
                 </h2>
 
-                {/* If we have a KYC status, show it in a small info box */}
+                {/* KYC Status Box */}
                 {kycStatus && (
                     <div className='mb-4 p-3 rounded bg-blue-100 text-blue-700'>
                         Your current KYC status: <strong>{kycStatus}</strong>
                     </div>
                 )}
 
-                {/* Success/Error Messages */}
+                {/* Success/Error Message */}
                 {message && (
                     <div
                         className={`mb-4 p-3 rounded ${
@@ -98,7 +82,7 @@ function KycForm() {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    {/* Full Name Field */}
+                    {/* Full Name */}
                     <div className='mb-4'>
                         <label
                             htmlFor='fullName'
@@ -118,7 +102,7 @@ function KycForm() {
                         />
                     </div>
 
-                    {/* Document URL Field */}
+                    {/* Document URL */}
                     <div className='mb-4'>
                         <label
                             htmlFor='docUrl'
