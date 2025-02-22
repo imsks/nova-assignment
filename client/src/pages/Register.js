@@ -147,6 +147,11 @@ function Register() {
                         Register
                     </button>
                 </form>
+                <div className='mt-4 text-center'>
+                    <a href='/' className='text-blue-500'>
+                        Already have an account? Login
+                    </a>
+                </div>
             </div>
         </div>
     )

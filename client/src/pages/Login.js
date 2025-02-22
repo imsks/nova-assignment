@@ -120,6 +120,11 @@ function Login() {
                         Login
                     </button>
                 </form>
+                <div className='mt-4 text-center'>
+                    <a href='/register' className='text-blue-500'>
+                        Don't have an account? Register
+                    </a>
+                </div>
             </div>
         </div>
     )
