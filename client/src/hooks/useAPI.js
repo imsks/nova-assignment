@@ -1,8 +1,8 @@
 export default function useAPI() {
-    const baseURL = "http://localhost:4000/api"
+    const BASE_API_URL = process.env.REACT_APP_API_URL
 
     const loginUser = async (formData) => {
-        const res = await fetch(`${baseURL}/auth/login`, {
+        const res = await fetch(`${BASE_API_URL}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
@@ -16,7 +16,7 @@ export default function useAPI() {
     }
 
     const registerUser = async (formData) => {
-        const res = await fetch(`${baseURL}/auth/register`, {
+        const res = await fetch(`${BASE_API_URL}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
@@ -30,7 +30,7 @@ export default function useAPI() {
     }
 
     const getKycStatus = async (token) => {
-        const res = await fetch(`${baseURL}/kyc/user`, {
+        const res = await fetch(`${BASE_API_URL}/kyc/user`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -62,7 +62,7 @@ export default function useAPI() {
     }
 
     const getKycSubmissions = async (token) => {
-        const res = await fetch(`${baseURL}/kyc/all`, {
+        const res = await fetch(`${BASE_API_URL}/kyc/all`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -76,7 +76,7 @@ export default function useAPI() {
     }
 
     const getKpi = async (token) => {
-        const res = await fetch(`${baseURL}/kyc/kpi`, {
+        const res = await fetch(`${BASE_API_URL}/kyc/kpi`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -90,7 +90,7 @@ export default function useAPI() {
     }
 
     const updateKycStatus = async (token, submissionId, status) => {
-        const res = await fetch(`${baseURL}/kyc/${submissionId}`, {
+        const res = await fetch(`${BASE_API_URL}/kyc/${submissionId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
