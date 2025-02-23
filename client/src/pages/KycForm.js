@@ -1,4 +1,3 @@
-// client/src/pages/KycForm.js
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useAPI from "../hooks/useAPI"
@@ -13,17 +12,14 @@ function KycForm() {
     const navigate = useNavigate()
     const token = localStorage.getItem("token")
 
-    // Destructure custom hook methods
     const { getKycStatus, submitKyc } = useAPI()
 
-    // Redirect if no token
     useEffect(() => {
         if (!token) {
             navigate("/")
         }
     }, [token, navigate])
 
-    // Fetch existing KYC status
     useEffect(() => {
         const fetchStatus = async () => {
             try {
@@ -62,14 +58,12 @@ function KycForm() {
                     KYC Form
                 </h2>
 
-                {/* KYC Status Box */}
                 {kycStatus && (
                     <div className='mb-4 p-3 rounded bg-blue-100 text-blue-700'>
                         Your current KYC status: <strong>{kycStatus}</strong>
                     </div>
                 )}
 
-                {/* Success/Error Message */}
                 {message && (
                     <div
                         className={`mb-4 p-3 rounded ${
@@ -82,7 +76,6 @@ function KycForm() {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    {/* Full Name */}
                     <div className='mb-4'>
                         <label
                             htmlFor='fullName'
@@ -102,7 +95,6 @@ function KycForm() {
                         />
                     </div>
 
-                    {/* Document URL */}
                     <div className='mb-4'>
                         <label
                             htmlFor='docUrl'

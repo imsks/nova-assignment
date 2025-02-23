@@ -1,4 +1,3 @@
-// client/src/pages/Register.js
 import React, { useState } from "react"
 import useAPI from "../hooks/useAPI"
 
@@ -11,7 +10,6 @@ function Register() {
     const [message, setMessage] = useState("")
     const [isError, setIsError] = useState(false)
 
-    // Import the API function
     const { registerUser } = useAPI()
 
     const handleChange = (e) => {
@@ -58,7 +56,6 @@ function Register() {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    {/* Email Field */}
                     <div className='mb-4'>
                         <label
                             htmlFor='email'
@@ -79,7 +76,6 @@ function Register() {
                         />
                     </div>
 
-                    {/* Password Field */}
                     <div className='mb-4'>
                         <label
                             htmlFor='password'
@@ -100,7 +96,6 @@ function Register() {
                         />
                     </div>
 
-                    {/* Role Toggle Buttons */}
                     <div className='mb-4'>
                         <span className='block text-sm font-medium text-gray-700 mb-1'>
                             Select Role
@@ -129,7 +124,6 @@ function Register() {
                         </div>
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type='submit'
                         className='w-full py-2 px-4 bg-blue-600 text-white 

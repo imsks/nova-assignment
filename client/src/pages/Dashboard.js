@@ -1,4 +1,3 @@
-// client/src/pages/Dashboard.js
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useAPI from "../hooks/useAPI"
@@ -11,7 +10,6 @@ function Dashboard() {
     const role = localStorage.getItem("role")
     const navigate = useNavigate()
 
-    // Destructure custom hook methods
     const { getKycSubmissions, getKpi, updateKycStatus } = useAPI()
 
     useEffect(() => {
@@ -20,7 +18,6 @@ function Dashboard() {
             return
         }
         fetchData()
-        // eslint-disable-next-line
     }, [token, role])
 
     const fetchData = async () => {
@@ -37,7 +34,6 @@ function Dashboard() {
     const handleStatusChange = async (id, status) => {
         try {
             await updateKycStatus(token, id, status)
-            // Refresh the data
             fetchData()
         } catch (err) {
             console.error(err)
@@ -52,10 +48,8 @@ function Dashboard() {
                     Admin Dashboard
                 </h2>
 
-                {/* KPI Section */}
                 <h3 className='text-lg font-medium mb-2'>KPI</h3>
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-8'>
-                    {/* Total Users */}
                     <div className='p-4 bg-blue-100 text-blue-700 rounded-md text-center'>
                         <p className='font-semibold'>Total Users</p>
                         <p className='text-2xl font-bold'>
@@ -63,7 +57,6 @@ function Dashboard() {
                         </p>
                     </div>
 
-                    {/* Approved */}
                     <div className='p-4 bg-green-100 text-green-700 rounded-md text-center'>
                         <p className='font-semibold'>Approved</p>
                         <p className='text-2xl font-bold'>
@@ -71,7 +64,6 @@ function Dashboard() {
                         </p>
                     </div>
 
-                    {/* Rejected */}
                     <div className='p-4 bg-red-100 text-red-700 rounded-md text-center'>
                         <p className='font-semibold'>Rejected</p>
                         <p className='text-2xl font-bold'>
@@ -79,14 +71,12 @@ function Dashboard() {
                         </p>
                     </div>
 
-                    {/* Pending */}
                     <div className='p-4 bg-yellow-100 text-yellow-700 rounded-md text-center'>
                         <p className='font-semibold'>Pending</p>
                         <p className='text-2xl font-bold'>{kpi.pending ?? 0}</p>
                     </div>
                 </div>
 
-                {/* Submissions Table */}
                 <h3 className='text-lg font-medium mb-4'>KYC Submissions</h3>
                 <div className='overflow-x-auto'>
                     <table className='min-w-full border-collapse'>

@@ -1,4 +1,3 @@
-// client/src/pages/Login.js
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useAPI from "../hooks/useAPI"
@@ -9,7 +8,6 @@ function Login() {
     const [isError, setIsError] = useState(false)
     const navigate = useNavigate()
 
-    // Import the API function from the hook
     const { loginUser } = useAPI()
 
     const handleChange = (e) => {
@@ -22,17 +20,14 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            // Call the custom hook function
             const data = await loginUser(formData)
 
-            // Data should contain { token, role }
             localStorage.setItem("token", data.token)
             localStorage.setItem("role", data.role)
 
             setMessage("Login successful!")
             setIsError(false)
 
-            // Navigate based on role
             if (data.role === "admin") {
                 navigate("/dashboard")
             } else {
