@@ -1,6 +1,7 @@
 // server/routes/kyc.js
 const express = require("express")
 const router = express.Router()
+const multer = require("multer")
 const authMiddleware = require("../middleware/authMiddleware")
 const {
     submitKyc,
@@ -10,11 +11,16 @@ const {
     getKpiData
 } = require("../controllers/kycController")
 
-// User endpoints
-router.post("/submit", authMiddleware(["user"]), submitKyc)
+const upload = multer({ storage: multer.memoryStorage() })
+
+router.post(
+    "/submit",
+    authMiddleware(["user"]),
+    upload.single("document"),
+    submitKyc
+)
 router.get("/user", authMiddleware(["user"]), getUserKyc)
 
-// Admin endpoints
 router.get("/all", authMiddleware(["admin"]), getAllKyc)
 router.put("/:submissionId", authMiddleware(["admin"]), updateKycStatus)
 router.get("/kpi", authMiddleware(["admin"]), getKpiData)

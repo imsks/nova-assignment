@@ -4,7 +4,7 @@ import useAPI from "../hooks/useAPI"
 
 function KycForm() {
     const [fullName, setFullName] = useState("")
-    const [docUrl, setDocUrl] = useState("")
+    const [file, setFile] = useState(null)
     const [kycStatus, setKycStatus] = useState(null)
     const [message, setMessage] = useState("")
     const [isError, setIsError] = useState(false)
@@ -34,21 +34,39 @@ function KycForm() {
         fetchStatus()
     }, [token, getKycStatus])
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0] || null)
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        try {
-            const result = await submitKyc(token, {
-                fullName,
-                docUrl
-            })
-            setKycStatus(result.kyc.status)
-            setMessage("KYC submitted successfully!")
-            setIsError(false)
-        } catch (err) {
-            console.error(err)
-            setMessage(err.message)
+
+        if (!file) {
+            setMessage("Please select a file before submitting.")
             setIsError(true)
-        }
+            return
+        } else if (kycStatus === "pending") {
+            setMessage(
+                "You have already submitted a KYC application. Please wait for it to be processed."
+            )
+            setIsError(true)
+            return
+        } else
+            try {
+                const formData = new FormData()
+                formData.append("full_name", fullName)
+                formData.append("document", file)
+
+                const data = await submitKyc(token, formData)
+
+                setKycStatus(data.kyc.status)
+                setMessage("KYC submitted successfully!")
+                setIsError(false)
+            } catch (err) {
+                console.error(err)
+                setMessage(err.message)
+                setIsError(true)
+            }
     }
 
     return (
@@ -75,7 +93,7 @@ function KycForm() {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType='multipart/form-data'>
                     <div className='mb-4'>
                         <label
                             htmlFor='fullName'
@@ -97,20 +115,18 @@ function KycForm() {
 
                     <div className='mb-4'>
                         <label
-                            htmlFor='docUrl'
+                            htmlFor='document'
                             className='block text-sm font-medium text-gray-700 mb-1'>
-                            Document URL
+                            Select Document
                         </label>
                         <input
-                            id='docUrl'
-                            type='text'
-                            placeholder='Document URL'
-                            value={docUrl}
-                            onChange={(e) => setDocUrl(e.target.value)}
-                            className='w-full px-3 py-2 border border-gray-300 
+                            id='document'
+                            type='file'
+                            onChange={handleFileChange}
+                            className='w-full px-3 py-2 bg-white border border-gray-300 
                          rounded-md focus:outline-none focus:ring-1 
                          focus:ring-blue-500'
-                            required
+                            accept='image/*,.pdf'
                         />
                     </div>
 
