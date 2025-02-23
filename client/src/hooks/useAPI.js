@@ -40,7 +40,7 @@ export default function useAPI() {
         if (!res.ok) {
             throw new Error(data.message || "Could not fetch KYC status")
         }
-        return data.kyc // kyc object or null
+        return data.kyc
     }
 
     const submitKyc = async (token, formData) => {

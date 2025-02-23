@@ -1,4 +1,3 @@
-// server/middleware/authMiddleware.js
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
@@ -16,14 +15,13 @@ const authMiddleware = (rolesAllowed = []) => {
                     .json({ message: "Failed to authenticate token" })
             }
 
-            // Check for role-based access
             if (rolesAllowed.length && !rolesAllowed.includes(decoded.role)) {
                 return res.status(403).json({
                     message: "Access forbidden: insufficient privileges"
                 })
             }
 
-            req.user = decoded // { id, email, role }
+            req.user = decoded
             next()
         })
     }
