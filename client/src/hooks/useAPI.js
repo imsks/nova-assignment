@@ -1,13 +1,6 @@
-// client/src/hooks/useAPI.js
-import { useState } from "react"
-
 export default function useAPI() {
-    const baseURL = "http://localhost:4000/api" // adjust if needed
+    const baseURL = "http://localhost:4000/api"
 
-    /**
-     * LOGIN
-     * @param {Object} formData { email, password }
-     */
     const loginUser = async (formData) => {
         const res = await fetch(`${baseURL}/auth/login`, {
             method: "POST",
@@ -19,13 +12,9 @@ export default function useAPI() {
         if (!res.ok) {
             throw new Error(data.message || "Login failed")
         }
-        return data // { token, role }
+        return data
     }
 
-    /**
-     * REGISTER
-     * @param {Object} formData { email, password, role }
-     */
     const registerUser = async (formData) => {
         const res = await fetch(`${baseURL}/auth/register`, {
             method: "POST",
@@ -40,11 +29,6 @@ export default function useAPI() {
         return data
     }
 
-    /**
-     * GET KYC STATUS
-     * @param {string} token
-     * returns { id, user_id, status, etc. } or null
-     */
     const getKycStatus = async (token) => {
         const res = await fetch(`${baseURL}/kyc/user`, {
             headers: {
@@ -59,11 +43,6 @@ export default function useAPI() {
         return data.kyc // kyc object or null
     }
 
-    /**
-     * SUBMIT KYC
-     * @param {string} token
-     * @param {Object} fields { fullName, docUrl }
-     */
     const submitKyc = async (token, { fullName, docUrl }) => {
         const res = await fetch(`${baseURL}/kyc/submit`, {
             method: "POST",
@@ -78,14 +57,9 @@ export default function useAPI() {
         if (!res.ok) {
             throw new Error(data.message || "KYC submission failed")
         }
-        return data // { kyc: { ... }, message, etc. }
+        return data
     }
 
-    /**
-     * GET ALL KYC SUBMISSIONS (Admin)
-     * @param {string} token
-     * returns array of submissions
-     */
     const getKycSubmissions = async (token) => {
         const res = await fetch(`${baseURL}/kyc/all`, {
             headers: {
@@ -97,14 +71,9 @@ export default function useAPI() {
         if (!res.ok) {
             throw new Error(data.message || "Could not fetch KYC submissions")
         }
-        return data.submissions // array
+        return data.submissions
     }
 
-    /**
-     * GET KPI DATA (Admin)
-     * @param {string} token
-     * returns { totalUsers, approved, rejected, pending }
-     */
     const getKpi = async (token) => {
         const res = await fetch(`${baseURL}/kyc/kpi`, {
             headers: {
@@ -116,15 +85,9 @@ export default function useAPI() {
         if (!res.ok) {
             throw new Error(data.message || "Could not fetch KPI data")
         }
-        return data // { totalUsers, approved, rejected, pending }
+        return data
     }
 
-    /**
-     * UPDATE KYC STATUS (Admin)
-     * @param {string} token
-     * @param {string} submissionId
-     * @param {string} status ( "approved" | "rejected" )
-     */
     const updateKycStatus = async (token, submissionId, status) => {
         const res = await fetch(`${baseURL}/kyc/${submissionId}`, {
             method: "PUT",
